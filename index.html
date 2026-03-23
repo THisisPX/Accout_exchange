@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>三角洲账号租赁 | 首页</title>
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner container">
+      <div class="brand">三角洲账号租赁</div>
+      <nav class="nav">
+        <a class="active" href="index.html">首页</a>
+        <a href="accounts.html">账号列表</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <h1>高品质三角洲账号，随时租用</h1>
+      <p>按段位、皮肤数量和价格挑选合适的账号</p>
+      <div class="search">
+        <input id="searchInput" class="input" placeholder="搜索：段位、皮肤、价格等">
+        <button id="searchBtn" class="button">搜索</button>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>热门账号</h2>
+      <div id="hotList" class="grid"></div>
+      <div id="emptyHot" class="empty" style="display:none">暂无匹配的账号</div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">© 2026 三角洲账号租赁</div>
+  </footer>
+
+  <script src="assets/data.js"></script>
+  <script>
+    const elHot = document.getElementById("hotList");
+    const elEmpty = document.getElementById("emptyHot");
+    const renderCards = (list, root, emptyEl) => {
+      root.innerHTML = "";
+      if (!list.length) {
+        emptyEl.style.display = "block";
+        return;
+      }
+      emptyEl.style.display = "none";
+      list.forEach(x => {
+        const card = document.createElement("a");
+        card.href = "accounts.html";
+        card.className = "card";
+        const title = document.createElement("div");
+        title.textContent = x.title;
+        const badge = document.createElement("span");
+        badge.className = "badge";
+        badge.textContent = x.rank;
+        const meta = document.createElement("div");
+        meta.className = "meta";
+        const skins = document.createElement("span");
+        skins.textContent = "皮肤 " + x.skins;
+        const price = document.createElement("span");
+        price.className = "price";
+        price.textContent = "¥" + x.price + "/小时";
+        const hours = document.createElement("div");
+        hours.className = "badge";
+        hours.textContent = x.hours;
+        meta.appendChild(skins);
+        meta.appendChild(price);
+        card.appendChild(title);
+        card.appendChild(badge);
+        card.appendChild(meta);
+        card.appendChild(hours);
+        root.appendChild(card);
+      });
+    };
+    const topAccounts = ACCOUNTS.slice(0, 6);
+    renderCards(topAccounts, elHot, elEmpty);
+    const input = document.getElementById("searchInput");
+    const btn = document.getElementById("searchBtn");
+    const doSearch = () => {
+      const q = input.value.trim().toLowerCase();
+      const filtered = ACCOUNTS.filter(x =>
+        x.title.toLowerCase().includes(q) ||
+        x.rank.toLowerCase().includes(q) ||
+        String(x.skins).includes(q) ||
+        String(x.price).includes(q)
+      );
+      renderCards(filtered, elHot, elEmpty);
+    };
+    btn.addEventListener("click", doSearch);
+    input.addEventListener("keydown", e => {
+      if (e.key === "Enter") doSearch();
+    });
+  </script>
+</body>
+</html>

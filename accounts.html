@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>三角洲账号租赁 | 账号列表</title>
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner container">
+      <div class="brand">三角洲账号租赁</div>
+      <nav class="nav">
+        <a href="index.html">首页</a>
+        <a class="active" href="accounts.html">账号列表</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="section">
+      <h2>全部账号</h2>
+      <div class="filters">
+        <select id="rank" class="select">
+          <option value="">全部段位</option>
+          <option>Bronze</option>
+          <option>Silver</option>
+          <option>Gold</option>
+          <option>Platinum</option>
+          <option>Diamond</option>
+        </select>
+        <select id="price" class="select">
+          <option value="">全部价格</option>
+          <option value="lt5">¥5以下/小时</option>
+          <option value="5to10">¥5-10/小时</option>
+          <option value="gt10">¥10以上/小时</option>
+        </select>
+        <select id="sort" class="select">
+          <option value="">默认排序</option>
+          <option value="priceAsc">价格从低到高</option>
+          <option value="priceDesc">价格从高到低</option>
+          <option value="skinsDesc">皮肤数量多到少</option>
+        </select>
+        <input id="keyword" class="input-sm" placeholder="关键词搜索">
+      </div>
+      <div id="list" class="grid"></div>
+      <div id="empty" class="empty" style="display:none">暂无匹配的账号</div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">© 2026 三角洲账号租赁</div>
+  </footer>
+
+  <script src="assets/data.js"></script>
+  <script>
+    const elList = document.getElementById("list");
+    const elEmpty = document.getElementById("empty");
+    const elRank = document.getElementById("rank");
+    const elPrice = document.getElementById("price");
+    const elSort = document.getElementById("sort");
+    const elKeyword = document.getElementById("keyword");
+    const render = list => {
+      elList.innerHTML = "";
+      if (!list.length) {
+        elEmpty.style.display = "block";
+        return;
+      }
+      elEmpty.style.display = "none";
+      list.forEach(x => {
+        const card = document.createElement("div");
+        card.className = "card";
+        const title = document.createElement("div");
+        title.textContent = x.title;
+        const badge = document.createElement("span");
+        badge.className = "badge";
+        badge.textContent = x.rank;
+        const meta = document.createElement("div");
+        meta.className = "meta";
+        const skins = document.createElement("span");
+        skins.textContent = "皮肤 " + x.skins;
+        const price = document.createElement("span");
+        price.className = "price";
+        price.textContent = "¥" + x.price + "/小时";
+        const hours = document.createElement("div");
+        hours.className = "badge";
+        hours.textContent = x.hours;
+        meta.appendChild(skins);
+        meta.appendChild(price);
+        card.appendChild(title);
+        card.appendChild(badge);
+        card.appendChild(meta);
+        card.appendChild(hours);
+        elList.appendChild(card);
+      });
+    };
+    const apply = () => {
+      let list = ACCOUNTS.slice();
+      const kw = elKeyword.value.trim().toLowerCase();
+      if (kw) {
+        list = list.filter(x =>
+          x.title.toLowerCase().includes(kw) ||
+          x.rank.toLowerCase().includes(kw) ||
+          String(x.skins).includes(kw) ||
+          String(x.price).includes(kw)
+        );
+      }
+      const r = elRank.value;
+      if (r) list = list.filter(x => x.rank === r);
+      const p = elPrice.value;
+      if (p === "lt5") list = list.filter(x => x.price < 5);
+      if (p === "5to10") list = list.filter(x => x.price >= 5 && x.price <= 10);
+      if (p === "gt10") list = list.filter(x => x.price > 10);
+      const s = elSort.value;
+      if (s === "priceAsc") list.sort((a, b) => a.price - b.price);
+      if (s === "priceDesc") list.sort((a, b) => b.price - a.price);
+      if (s === "skinsDesc") list.sort((a, b) => b.skins - a.skins);
+      render(list);
+    };
+    elRank.addEventListener("change", apply);
+    elPrice.addEventListener("change", apply);
+    elSort.addEventListener("change", apply);
+    elKeyword.addEventListener("input", apply);
+    apply();
+  </script>
+</body>
+</html>
