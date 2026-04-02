@@ -20,28 +20,68 @@
   <main class="container">
     <section class="section">
       <h2>全部账号</h2>
-      <div class="filters">
-        <select id="rank" class="select">
-          <option value="">全部段位</option>
-          <option>Bronze</option>
-          <option>Silver</option>
-          <option>Gold</option>
-          <option>Platinum</option>
-          <option>Diamond</option>
-        </select>
-        <select id="price" class="select">
-          <option value="">全部价格</option>
-          <option value="lt5">¥5以下/小时</option>
-          <option value="5to10">¥5-10/小时</option>
-          <option value="gt10">¥10以上/小时</option>
-        </select>
-        <select id="sort" class="select">
-          <option value="">默认排序</option>
-          <option value="priceAsc">价格从低到高</option>
-          <option value="priceDesc">价格从高到低</option>
-          <option value="skinsDesc">皮肤数量多到少</option>
-        </select>
-        <input id="keyword" class="input-sm" placeholder="关键词搜索">
+      
+      <!-- 筛选表格 -->
+      <div class="filter-panel">
+        <div class="filter-panel-header">
+          <h3>筛选条件</h3>
+          <button id="resetBtn" class="reset-btn">重置筛选</button>
+        </div>
+        <div class="filter-table">
+          <div class="filter-row-table">
+            <div class="filter-label">资产范围</div>
+            <div class="filter-options">
+              <label class="filter-option active"><input type="radio" name="assets" value="" checked>全部</label>
+              <label class="filter-option"><input type="radio" name="assets" value="0-50">0-50M</label>
+              <label class="filter-option"><input type="radio" name="assets" value="50-100">50-100M</label>
+              <label class="filter-option"><input type="radio" name="assets" value="100-200">100-200M</label>
+              <label class="filter-option"><input type="radio" name="assets" value="200-300">200-300M</label>
+              <label class="filter-option"><input type="radio" name="assets" value="300-500">300-500M</label>
+              <label class="filter-option"><input type="radio" name="assets" value="500+">500M以上</label>
+            </div>
+          </div>
+          <div class="filter-row-table">
+            <div class="filter-label">段位</div>
+            <div class="filter-options">
+              <label class="filter-option active"><input type="radio" name="rank" value="" checked>全部</label>
+              <label class="filter-option"><input type="radio" name="rank" value="青铜">青铜</label>
+              <label class="filter-option"><input type="radio" name="rank" value="白银">白银</label>
+              <label class="filter-option"><input type="radio" name="rank" value="黄金">黄金</label>
+              <label class="filter-option"><input type="radio" name="rank" value="铂金">铂金</label>
+              <label class="filter-option"><input type="radio" name="rank" value="钻石">钻石</label>
+              <label class="filter-option"><input type="radio" name="rank" value="黑鹰">黑鹰</label>
+              <label class="filter-option"><input type="radio" name="rank" value="三角洲巅峰">三角洲巅峰</label>
+            </div>
+          </div>
+          <div class="filter-row-table">
+            <div class="filter-label">皮肤数量</div>
+            <div class="filter-options">
+              <label class="filter-option active"><input type="radio" name="skins" value="" checked>全部</label>
+              <label class="filter-option"><input type="radio" name="skins" value="0-10">0-10个</label>
+              <label class="filter-option"><input type="radio" name="skins" value="10-30">10-30个</label>
+              <label class="filter-option"><input type="radio" name="skins" value="30-50">30-50个</label>
+              <label class="filter-option"><input type="radio" name="skins" value="50-100">50-100个</label>
+              <label class="filter-option"><input type="radio" name="skins" value="100+">100个以上</label>
+            </div>
+          </div>
+          <div class="filter-row-table">
+            <div class="filter-label">排序方式</div>
+            <div class="filter-options">
+              <label class="filter-option active"><input type="radio" name="sort" value="" checked>默认排序</label>
+              <label class="filter-option"><input type="radio" name="sort" value="priceAsc">价格从低到高</label>
+              <label class="filter-option"><input type="radio" name="sort" value="priceDesc">价格从高到低</label>
+              <label class="filter-option"><input type="radio" name="sort" value="skinsAsc">皮肤数量少到多</label>
+              <label class="filter-option"><input type="radio" name="sort" value="skinsDesc">皮肤数量多到少</label>
+              <label class="filter-option"><input type="radio" name="sort" value="rankAsc">段位从低到高</label>
+              <label class="filter-option"><input type="radio" name="sort" value="rankDesc">段位从高到低</label>
+              <label class="filter-option"><input type="radio" name="sort" value="assetsDesc">资产从多到少</label>
+            </div>
+          </div>
+        </div>
+        <div class="filter-search-bar">
+          <input id="keyword" class="input" placeholder="搜索账号编号、段位、哈弗币数量等">
+          <button id="searchBtn" class="button">搜索</button>
+        </div>
       </div>
       <div id="list" class="grid"></div>
       <div id="empty" class="empty" style="display:none">暂无匹配的账号</div>
@@ -56,10 +96,54 @@
   <script>
     const elList = document.getElementById("list");
     const elEmpty = document.getElementById("empty");
-    const elRank = document.getElementById("rank");
-    const elPrice = document.getElementById("price");
-    const elSort = document.getElementById("sort");
     const elKeyword = document.getElementById("keyword");
+    const searchBtn = document.getElementById("searchBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    
+    // 获取选中的单选按钮值
+    const getRadioValue = (name) => {
+      const radio = document.querySelector(`input[name="${name}"]:checked`);
+      return radio ? radio.value : '';
+    };
+    
+    // 更新单选按钮样式
+    const updateRadioStyle = () => {
+      document.querySelectorAll('.filter-option').forEach(label => {
+        const radio = label.querySelector('input[type="radio"]');
+        if (radio && radio.checked) {
+          label.classList.add('active');
+        } else {
+          label.classList.remove('active');
+        }
+      });
+    };
+
+    // 段位等级映射
+    const rankLevels = {
+      "青铜": 1,
+      "白银": 2,
+      "黄金": 3,
+      "铂金": 4,
+      "钻石": 5,
+      "黑鹰": 6,
+      "三角洲巅峰": 7
+    };
+
+    // 提取资产数值（从字符串中提取数字）
+    const getAssetValue = (assetStr) => {
+      const match = assetStr.match(/\d+(\.\d+)?/);
+      if (match) {
+        let value = parseFloat(match[0]);
+        // 处理单位
+        if (assetStr.includes('亿')) {
+          value *= 100;
+        } else if (assetStr.includes('万')) {
+          value /= 100;
+        }
+        return value;
+      }
+      return 0;
+    };
     const render = list => {
       elList.innerHTML = "";
       if (!list.length) {
@@ -85,15 +169,20 @@
         const hours = document.createElement("div");
         hours.className = "badge";
         hours.textContent = x.hours;
+        const assets = document.createElement("div");
+        assets.className = "badge";
+        assets.textContent = x.assets || "无资产信息";
         meta.appendChild(skins);
         meta.appendChild(price);
         card.appendChild(title);
         card.appendChild(badge);
         card.appendChild(meta);
+        card.appendChild(assets);
         card.appendChild(hours);
         elList.appendChild(card);
       });
     };
+
     const apply = () => {
       let list = ACCOUNTS.slice();
       const kw = elKeyword.value.trim().toLowerCase();
@@ -102,25 +191,95 @@
           x.title.toLowerCase().includes(kw) ||
           x.rank.toLowerCase().includes(kw) ||
           String(x.skins).includes(kw) ||
-          String(x.price).includes(kw)
+          String(x.price).includes(kw) ||
+          x.assets.toLowerCase().includes(kw)
         );
       }
-      const r = elRank.value;
+      
+      const r = getRadioValue('rank');
       if (r) list = list.filter(x => x.rank === r);
-      const p = elPrice.value;
-      if (p === "lt5") list = list.filter(x => x.price < 5);
-      if (p === "5to10") list = list.filter(x => x.price >= 5 && x.price <= 10);
-      if (p === "gt10") list = list.filter(x => x.price > 10);
-      const s = elSort.value;
+      
+      const sk = getRadioValue('skins');
+      if (sk) {
+        list = list.filter(x => {
+          const skinCount = x.skins ? x.skins.length : 0;
+          switch (sk) {
+            case '0-10':
+              return skinCount >= 0 && skinCount <= 10;
+            case '10-30':
+              return skinCount > 10 && skinCount <= 30;
+            case '30-50':
+              return skinCount > 30 && skinCount <= 50;
+            case '50-100':
+              return skinCount > 50 && skinCount <= 100;
+            case '100+':
+              return skinCount > 100;
+            default:
+              return true;
+          }
+        });
+      }
+      
+      const a = getRadioValue('assets');
+      if (a) {
+        list = list.filter(x => {
+          const assetValue = getAssetValue(x.assets);
+          switch (a) {
+            case '0-50':
+              return assetValue >= 0 && assetValue <= 50;
+            case '50-100':
+              return assetValue > 50 && assetValue <= 100;
+            case '100-200':
+              return assetValue > 100 && assetValue <= 200;
+            case '200-300':
+              return assetValue > 200 && assetValue <= 300;
+            case '300-500':
+              return assetValue > 300 && assetValue <= 500;
+            case '500+':
+              return assetValue > 500;
+            default:
+              return true;
+          }
+        });
+      }
+      
+      const s = getRadioValue('sort');
       if (s === "priceAsc") list.sort((a, b) => a.price - b.price);
       if (s === "priceDesc") list.sort((a, b) => b.price - a.price);
+      if (s === "skinsAsc") list.sort((a, b) => a.skins - b.skins);
       if (s === "skinsDesc") list.sort((a, b) => b.skins - a.skins);
+      if (s === "rankAsc") list.sort((a, b) => rankLevels[a.rank] - rankLevels[b.rank]);
+      if (s === "rankDesc") list.sort((a, b) => rankLevels[b.rank] - rankLevels[a.rank]);
+      if (s === "assetsDesc") list.sort((a, b) => getAssetValue(b.assets) - getAssetValue(a.assets));
       render(list);
     };
-    elRank.addEventListener("change", apply);
-    elPrice.addEventListener("change", apply);
-    elSort.addEventListener("change", apply);
-    elKeyword.addEventListener("input", apply);
+    
+    // 重置筛选
+    const resetFilters = () => {
+      document.querySelectorAll('input[type="radio"]').forEach(radio => {
+        if (radio.value === '') {
+          radio.checked = true;
+        }
+      });
+      elKeyword.value = '';
+      updateRadioStyle();
+      render(ACCOUNTS);
+    };
+
+    searchBtn.addEventListener("click", apply);
+    resetBtn.addEventListener("click", resetFilters);
+    elKeyword.addEventListener("keydown", e => {
+      if (e.key === "Enter") apply();
+    });
+    
+    // 监听所有单选按钮变化
+    document.querySelectorAll('input[type="radio"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        updateRadioStyle();
+        apply();
+      });
+    });
+    
     apply();
   </script>
 </body>
