@@ -46,6 +46,9 @@
           <a href="#sell" class="btn-hero btn-hero-secondary">
             <span class="btn-icon">📤</span>我要出号
           </a>
+          <button class="btn-hero btn-hero-payment" onclick="openPaymentModal()">
+            <span class="btn-icon">💳</span>联系支付
+          </button>
         </div>
       </div>
       <div class="hero-features">
@@ -381,6 +384,17 @@
             <tbody id="accountsTableBody"></tbody>
           </table>
         </div>
+        
+        <!-- 固定支付按钮容器 -->
+        <div id="fixedPaymentContainer" class="fixed-payment-container">
+          <div class="fixed-payment-content">
+            <span class="selected-account-info-text"></span>
+            <button id="fixedPaymentBtn" class="fixed-payment-btn" onclick="openPaymentModal()">
+              💳 联系支付
+            </button>
+          </div>
+        </div>
+        
         <div id="emptyHot" class="empty" style="display:none">暂无匹配的账号</div>
         <!-- 分页组件 -->
         <div id="pagination" class="pagination-container">
@@ -814,6 +828,88 @@
     </section>
   </main>
 
+  <!-- 联系支付弹窗 -->
+  <div id="paymentModal" class="modal-overlay">
+    <div class="modal-content payment-modal">
+      <button class="modal-close" onclick="closePaymentModal()">×</button>
+
+      <div class="payment-header">
+        <div class="payment-icon">💳</div>
+        <h2>联系支付</h2>
+        <p class="payment-subtitle">选择支付方式，扫码添加好友完成交易</p>
+      </div>
+
+      <div class="payment-info">
+        <div class="info-section">
+          <h4>📋 交易说明</h4>
+          <ul>
+            <li>选择下方支付方式，扫码添加客服为好友</li>
+            <li>添加好友后说明您要租赁/出售的账号信息</li>
+            <li>客服将为您提供详细的交易流程指导</li>
+            <li>完成支付后，账号将立即交付给您</li>
+          </ul>
+        </div>
+
+        <div class="info-section">
+          <h4>💰 支付方式</h4>
+          <div class="payment-methods">
+            <div class="method-card active" data-method="wechat">
+              <span class="method-icon">💚</span>
+              <span class="method-name">微信支付</span>
+            </div>
+            <div class="method-card" data-method="alipay">
+              <span class="method-icon">🔵</span>
+              <span class="method-name">支付宝</span>
+            </div>
+            <div class="method-card" data-method="qq">
+              <span class="method-icon">🟢</span>
+              <span class="method-name">QQ支付</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-section safety-tips">
+          <h4>🛡️ 安全提示</h4>
+          <ul>
+            <li>✅ 平台担保交易，安全有保障</li>
+            <li>✅ 官方流程操作，账号信息严格保密</li>
+            <li>⚠️ 请勿私下转账，谨防诈骗</li>
+            <li>⚠️ 如遇可疑情况，请立即联系客服</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="payment-qr-section">
+        <div class="qr-display">
+          <div class="qr-container" id="qrCode">
+            <img src="wechat_qr.png" alt="微信二维码" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="qr-placeholder">
+              <span>📱</span>
+              <p>微信二维码</p>
+              <small>请添加客服微信</small>
+            </div>
+          </div>
+          <div class="qr-label">
+            <span class="qr-icon">💚</span>
+            <span>扫码添加微信好友</span>
+          </div>
+        </div>
+
+        <div class="payment-actions">
+          <button class="btn-confirm-payment" onclick="confirmPayment()">
+            ✅ 我已添加好友
+          </button>
+          <p class="confirm-hint">添加好友后请点击上方按钮</p>
+        </div>
+      </div>
+
+      <div class="payment-footer">
+        <p>💬 客服工作时间：9:00 - 24:00</p>
+        <p>📞 如需帮助请联系：<a href="javascript:void(0)">在线客服</a></p>
+      </div>
+    </div>
+  </div>
+
   <footer class="footer">
     <div class="container">© 2026 三角洲账号租赁</div>
   </footer>
@@ -921,6 +1017,28 @@
       list.forEach(x => {
         const card = document.createElement("div");
         card.className = "account-card";
+        card.dataset.accountId = x.id;
+        card.dataset.paymentEnabled = x.paymentEnabled !== false;
+        card.dataset.paymentNote = x.paymentNote || "支持支付";
+        card.dataset.price = x.price;
+        
+        card.addEventListener('click', function() {
+          // 清除之前的选择状态
+          document.querySelectorAll('.account-card.selected').forEach(c => {
+            c.classList.remove('selected');
+            const btn = c.querySelector('.inline-payment-btn');
+            if (btn) btn.style.display = 'none';
+          });
+          
+          // 设置当前选中状态
+          card.classList.add('selected');
+          
+          // 显示当前卡片的联系支付按钮
+          const payBtn = card.querySelector('.inline-payment-btn');
+          if (payBtn) {
+            payBtn.style.display = 'inline-flex';
+          }
+        });
         
         const header = document.createElement("div");
         header.className = "card-header";
@@ -1014,14 +1132,26 @@
           </div>
         `;
         
-        const note = document.createElement("div");
-        note.className = "card-note";
+        // 添加联系支付按钮
+        const payBtn = document.createElement('button');
+        payBtn.className = 'inline-payment-btn';
+        payBtn.innerHTML = '💳 联系支付';
+        payBtn.style.display = 'none';
+        payBtn.onclick = function(e) {
+          e.stopPropagation();
+          openPaymentModal();
+        };
+        
+        const note = document.createElement('div');
+        note.className = 'card-note';
         note.textContent = x.note || "暂无备注";
+        note.style.marginTop = '12px';
         
         card.appendChild(header);
         card.appendChild(info);
         card.appendChild(skins);
         card.appendChild(pricing);
+        card.appendChild(payBtn);
         card.appendChild(note);
         root.appendChild(card);
       });
@@ -1059,6 +1189,8 @@
       if (emptyEl) emptyEl.style.display = "none";
       list.forEach((x, index) => {
         const tr = document.createElement("tr");
+        tr.className = 'account-row';
+        tr.dataset.accountId = x.id;
         
         // 处理皮肤列
         let skinsHtml = '-';
@@ -1093,6 +1225,34 @@
             <button class="expand-btn" onclick="toggleCellContent('note-content-${index}', this)">展开</button>
           </td>
         `;
+        
+        // 点击行显示联系支付按钮（必须在innerHTML之后添加）
+        let currentSelectedAccount = null;
+        
+        tr.addEventListener('click', function(e) {
+          // 忽略展开/收起按钮的点击
+          if (e.target.classList.contains('expand-btn')) return;
+          
+          // 清除之前的选择
+          document.querySelectorAll('.account-row.selected').forEach(row => {
+            row.classList.remove('selected');
+          });
+          
+          // 设置当前选中
+          this.classList.add('selected');
+          currentSelectedAccount = x;
+          
+          // 显示固定支付按钮容器
+          const container = document.getElementById('fixedPaymentContainer');
+          const btn = document.getElementById('fixedPaymentBtn');
+          const infoText = container.querySelector('.selected-account-info-text');
+          
+          if (container && btn) {
+            container.classList.add('active');
+            infoText.innerHTML = `已选择：<strong>${x.id}</strong> | 租金 ¥${x.deposit}/小时 押金 ¥${x.price}`;
+          }
+        });
+        
         tbody.appendChild(tr);
       });
     };
@@ -1709,6 +1869,306 @@
         document.getElementById(id).classList.remove('has-preview');
       });
     });
+  </script>
+
+  <script>
+    // ========== 账号选择与支付联动功能 ==========
+    let selectedAccount = null;
+    let isLoading = false;
+
+    // 账号选择处理函数
+    function handleAccountSelection(cardElement, accountData) {
+      // 清除之前的选择状态
+      document.querySelectorAll('.account-card.selected').forEach(card => {
+        card.classList.remove('selected');
+      });
+
+      // 设置当前选中状态
+      cardElement.classList.add('selected');
+      selectedAccount = accountData;
+
+      // 显示加载状态
+      showPaymentLoading(true);
+
+      // 模拟异步检测账号支付能力
+      setTimeout(() => {
+        checkPaymentCapability(cardElement, accountData);
+      }, 300);
+    }
+
+    // 检测账号支付能力
+    function checkPaymentCapability(cardElement, accountData) {
+      showPaymentLoading(false);
+
+      const paymentEnabled = accountData.paymentEnabled !== false;
+      const paymentBtn = getOrCreatePaymentButton();
+
+      if (paymentEnabled) {
+        // 账号支持支付
+        paymentBtn.style.display = 'inline-flex';
+        paymentBtn.classList.remove('disabled');
+        paymentBtn.disabled = false;
+        
+        // 更新按钮文案
+        const btnText = paymentBtn.querySelector('.btn-text');
+        if (btnText) {
+          btnText.textContent = '联系支付';
+        }
+        
+        // 更新提示
+        updatePaymentTooltip(accountData.paymentNote || '支持支付');
+        
+        // 显示可用提示
+        showPaymentStatus('success', accountData.paymentNote || '该账号支持在线支付');
+      } else {
+        // 账号不支持支付
+        paymentBtn.style.display = 'inline-flex';
+        paymentBtn.classList.add('disabled');
+        paymentBtn.disabled = true;
+        
+        // 更新按钮文案
+        const btnText = paymentBtn.querySelector('.btn-text');
+        if (btnText) {
+          btnText.textContent = '暂不支持';
+        }
+        
+        // 更新提示
+        updatePaymentTooltip('该账号暂不支持在线支付');
+        
+        // 显示不可用提示
+        showPaymentStatus('disabled', accountData.paymentNote || '该账号暂不支持在线支付');
+      }
+    }
+
+    // 获取或创建支付按钮
+    function getOrCreatePaymentButton() {
+      let btn = document.getElementById('dynamicPaymentBtn');
+      if (!btn) {
+        btn = document.createElement('button');
+        btn.id = 'dynamicPaymentBtn';
+        btn.className = 'btn-hero-payment dynamic-payment-btn';
+        btn.innerHTML = '<span class="btn-text">联系支付</span>';
+        btn.onclick = function() {
+          if (!this.disabled && selectedAccount) {
+            openPaymentModalWithAccount(selectedAccount);
+          }
+        };
+        
+        // 插入到英雄按钮区域
+        const heroActions = document.querySelector('.hero-actions');
+        if (heroActions) {
+          heroActions.appendChild(btn);
+        }
+      }
+      return btn;
+    }
+
+    // 打开支付弹窗（带账号信息）
+    function openPaymentModalWithAccount(account) {
+      const modal = document.getElementById('paymentModal');
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      
+      // 更新弹窗内的账号信息
+      const paymentInfo = modal.querySelector('.payment-info');
+      if (paymentInfo) {
+        const accountInfo = document.createElement('div');
+        accountInfo.className = 'selected-account-info';
+        accountInfo.innerHTML = `
+          <p>当前选中的账号：<strong>${account.id}</strong></p>
+          <p>租金：¥${account.price}/小时  押金：¥${account.deposit}</p>
+        `;
+        
+        // 移除旧信息
+        const oldInfo = paymentInfo.querySelector('.selected-account-info');
+        if (oldInfo) {
+          oldInfo.remove();
+        }
+        
+        // 添加新信息
+        paymentInfo.insertBefore(accountInfo, paymentInfo.firstChild);
+      }
+      
+      updateQRCode(currentPaymentMethod);
+    }
+
+    // 显示/隐藏加载状态
+    function showPaymentLoading(show) {
+      isLoading = show;
+      const btn = getOrCreatePaymentButton();
+      
+      if (show) {
+        btn.classList.add('loading');
+        btn.innerHTML = '<span class="btn-loading">检测中...</span>';
+        btn.disabled = true;
+      } else {
+        btn.classList.remove('loading');
+      }
+    }
+
+    // 更新支付提示
+    function updatePaymentTooltip(message) {
+      let tooltip = document.getElementById('paymentTooltip');
+      if (!tooltip) {
+        tooltip = document.createElement('div');
+        tooltip.id = 'paymentTooltip';
+        tooltip.className = 'payment-tooltip';
+        
+        const btn = document.getElementById('dynamicPaymentBtn');
+        if (btn) {
+          btn.parentNode.insertBefore(tooltip, btn.nextSibling);
+        }
+      }
+      tooltip.textContent = message;
+      
+      // 根据状态设置颜色
+      if (message.includes('暂不支持') || message.includes('不可用')) {
+        tooltip.className = 'payment-tooltip disabled';
+      } else {
+        tooltip.className = 'payment-tooltip success';
+      }
+    }
+
+    // 显示支付状态
+    function showPaymentStatus(type, message) {
+      let status = document.getElementById('paymentStatus');
+      if (!status) {
+        status = document.createElement('div');
+        status.id = 'paymentStatus';
+        status.className = 'payment-status';
+        
+        const btn = getOrCreatePaymentButton();
+        if (btn && btn.parentNode) {
+          btn.parentNode.insertBefore(status, btn);
+        }
+      }
+      
+      status.className = `payment-status ${type}`;
+      status.innerHTML = message;
+    }
+
+    // 清除账号选择
+    function clearAccountSelection() {
+      selectedAccount = null;
+      document.querySelectorAll('.account-card.selected').forEach(card => {
+        card.classList.remove('selected');
+      });
+      
+      const btn = document.getElementById('dynamicPaymentBtn');
+      if (btn) {
+        btn.style.display = 'none';
+      }
+      
+      const tooltip = document.getElementById('paymentTooltip');
+      if (tooltip) {
+        tooltip.remove();
+      }
+      
+      const status = document.getElementById('paymentStatus');
+      if (status) {
+        status.remove();
+      }
+    }
+
+    // 错误处理
+    function handlePaymentError(error) {
+      console.error('Payment error:', error);
+      showPaymentStatus('error', '账号信息加载失败，请刷新页面重试');
+      
+      const btn = getOrCreatePaymentButton();
+      if (btn) {
+        btn.classList.add('error');
+        btn.disabled = true;
+      }
+    }
+
+    // 初始化时隐藏支付按钮
+    document.addEventListener('DOMContentLoaded', function() {
+      const btn = getOrCreatePaymentButton();
+      if (btn) {
+        btn.style.display = 'none';
+      }
+    });
+
+    // ========== 联系支付弹窗功能 ==========
+    let currentPaymentMethod = 'wechat';
+    const qrCodes = {
+      wechat: { img: 'wechat_qr.png', label: '扫码添加微信好友', icon: '💚' },
+      alipay: { img: 'alipay_qr.png', label: '扫码添加支付宝好友', icon: '🔵' },
+      qq: { img: 'qq_qr.png', label: '扫码添加QQ好友', icon: '🟢' }
+    };
+
+    function openPaymentModal() {
+      const modal = document.getElementById('paymentModal');
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      updateQRCode(currentPaymentMethod);
+    }
+
+    function closePaymentModal() {
+      const modal = document.getElementById('paymentModal');
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    // 点击遮罩关闭
+    document.getElementById('paymentModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closePaymentModal();
+      }
+    });
+
+    // ESC键关闭
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closePaymentModal();
+      }
+    });
+
+    // 支付方式切换
+    document.querySelectorAll('.method-card').forEach(card => {
+      card.addEventListener('click', function() {
+        document.querySelectorAll('.method-card').forEach(c => c.classList.remove('active'));
+        this.classList.add('active');
+        currentPaymentMethod = this.dataset.method;
+        updateQRCode(currentPaymentMethod);
+      });
+    });
+
+    function updateQRCode(method) {
+      const qrData = qrCodes[method];
+      const qrContainer = document.getElementById('qrCode');
+      const qrImg = qrContainer.querySelector('img');
+      const placeholder = qrContainer.querySelector('.qr-placeholder');
+      const qrLabel = qrContainer.parentElement.querySelector('.qr-label');
+
+      qrImg.src = qrData.img;
+      qrImg.alt = method === 'wechat' ? '微信二维码' : method === 'alipay' ? '支付宝二维码' : 'QQ二维码';
+      
+      qrImg.onerror = function() {
+        this.style.display = 'none';
+        placeholder.style.display = 'flex';
+      };
+      
+      qrImg.onload = function() {
+        this.style.display = 'block';
+        placeholder.style.display = 'none';
+      };
+
+      qrLabel.innerHTML = `<span class="qr-icon">${qrData.icon}</span><span>${qrData.label}</span>`;
+    }
+
+    function confirmPayment() {
+      const btn = document.querySelector('.btn-confirm-payment');
+      btn.classList.add('loading');
+      btn.textContent = '处理中...';
+
+      setTimeout(() => {
+        btn.classList.remove('loading');
+        alert('感谢您的信任！客服将尽快通过您的好友申请，请留意微信/QQ消息。\n\n如有任何问题，请回复消息咨询。');
+        closePaymentModal();
+      }, 1500);
+    }
   </script>
 </body>
 </html>

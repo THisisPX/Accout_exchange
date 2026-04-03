@@ -21,6 +21,8 @@ const ACCOUNTS = [
     operatorSkins: 51, 
     price: 559,
     deposit: 765,
+    paymentEnabled: true,
+    paymentNote: "支持微信/支付宝/QQ支付",
     note: "12格卡包，航天巴克什所有通道卡，几个工蜂模型，若干哈布克档案，金胸挂等等除了我说的不动，六套红弹另外算别的随便用部赠送收藏室不动展柜不动藏品不动最下面三个箱子里的东西不动"
   },
   { 
@@ -45,6 +47,8 @@ const ACCOUNTS = [
     operatorSkins: 9, 
     price: 84,
     deposit: 278,
+    paymentEnabled: true,
+    paymentNote: "支持微信/支付宝支付",
     note: "9发A大子了纯币1个亿 除了藏品箱的东西 别的随便动"
   },
   { 
@@ -69,6 +73,8 @@ const ACCOUNTS = [
     operatorSkins: 61, 
     price: 283,
     deposit: 585,
+    paymentEnabled: false,
+    paymentNote: "暂不支持支付",
     note: "一套掉了一点耐久的六套，和一个龟包外加两组红蛋最后一个藏品箱，收藏室，藏品里面的道具，赤枭信物不要动"
   },
   { 
@@ -93,6 +99,8 @@ const ACCOUNTS = [
     operatorSkins: 20, 
     price: 257,
     deposit: 409,
+    paymentEnabled: true,
+    paymentNote: "仅支持微信支付",
     note: "仓库装备随意收藏室和展示台别动"
   },
   { 
@@ -117,6 +125,8 @@ const ACCOUNTS = [
     operatorSkins: 40, 
     price: 472,
     deposit: 888,
+    paymentEnabled: true,
+    paymentNote: "支持微信/支付宝/QQ支付",
     note: "两套六套，满改m7,m700,甲修，医疗包，针剂饮品。卡包内仿制卡。20天九格，赠送外其他物品、道具不要动用。aw子弹红弹付费。"
   },
   { 
@@ -141,6 +151,8 @@ const ACCOUNTS = [
     operatorSkins: 38, 
     price: 132,
     deposit: 163,
+    paymentEnabled: false,
+    paymentNote: "暂不支持支付",
     note: "除纯币外其他不可以使用"
   },
   { 
@@ -165,6 +177,8 @@ const ACCOUNTS = [
     operatorSkins: 104, 
     price: 1167,
     deposit: 3214,
+    paymentEnabled: true,
+    paymentNote: "支持微信/支付宝/QQ支付",
     note: "优惠可谈价格可谈"
   },
   { 
@@ -189,6 +203,8 @@ const ACCOUNTS = [
     operatorSkins: 21, 
     price: 209,
     deposit: 364,
+    paymentEnabled: true,
+    paymentNote: "支持微信支付",
     note: ""
   },
   { 
@@ -213,6 +229,8 @@ const ACCOUNTS = [
     operatorSkins: 13, 
     price: 219,
     deposit: 368,
+    paymentEnabled: true,
+    paymentNote: "支持微信/支付宝/QQ支付",
     note: "5天33"
   },
   { 
@@ -237,6 +255,8 @@ const ACCOUNTS = [
     operatorSkins: 26, 
     price: 193,
     deposit: 419,
+    paymentEnabled: false,
+    paymentNote: "暂不支持支付",
     note: "两个包和一个六甲酒那三列还有收藏箱不能动"
   },
   { 
@@ -261,6 +281,8 @@ const ACCOUNTS = [
     operatorSkins: 70, 
     price: 366,
     deposit: 742,
+    paymentEnabled: true,
+    paymentNote: "支持支付宝支付",
     note: "送4个6甲，7.62红蛋赠送15个六甲，2个六头，5个高级咖啡豆，70发aw一块钱一发"
   },
   { 
@@ -285,6 +307,8 @@ const ACCOUNTS = [
     operatorSkins: 10, 
     price: 159,
     deposit: 332,
+    paymentEnabled: true,
+    paymentNote: "支持微信/支付宝支付",
     note: "两月前被误封一月，后期一玩没出过问题五甲一头，甲休大红包另算"
   }
 ];
