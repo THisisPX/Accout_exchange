@@ -18,6 +18,21 @@
   </header>
 
   <main class="container">
+    <!-- 开场视频遮罩层 -->
+    <div id="introOverlay" class="intro-overlay">
+      <video id="introVideo" class="intro-video-player" autoplay muted playsinline>
+        <source src="video-front.mp4" type="video/mp4">
+      </video>
+      <div id="videoFallback" class="intro-fallback" style="display: none;">
+        <div class="fallback-content">
+          <div class="fallback-icon">🎮</div>
+          <p class="fallback-text">三角洲账号租赁</p>
+          <p class="fallback-subtext">正在加载...</p>
+        </div>
+      </div>
+      <button id="skipIntroBtn" class="skip-intro-btn" onclick="skipIntro()">跳过 / Skip</button>
+    </div>
+
     <section class="hero">
       <div class="hero-decoration hero-decoration-left">
         <span class="deco-element deco-crosshair">⌖</span>
@@ -895,8 +910,17 @@
           </div>
         </div>
 
+        <div class="payment-agreement">
+          <label class="agreement-checkbox">
+            <input type="checkbox" id="agreementCheckbox">
+            <span class="agreement-text">
+              我已阅读并同意 <a href="javascript:void(0)" onclick="showTerms(event)">《账号租赁服务协议》</a> 和 <a href="javascript:void(0)" onclick="showTerms(event)">《隐私政策》</a>
+            </span>
+          </label>
+        </div>
+
         <div class="payment-actions">
-          <button class="btn-confirm-payment" onclick="confirmPayment()">
+          <button class="btn-confirm-payment" id="confirmPaymentBtn" onclick="confirmPayment()" disabled>
             ✅ 我已添加好友
           </button>
           <p class="confirm-hint">添加好友后请点击上方按钮</p>
@@ -2088,7 +2112,77 @@
       if (btn) {
         btn.style.display = 'none';
       }
+      
+      // 播放开场视频
+      initIntroVideo();
     });
+
+    // 开场遮罩层控制
+    function initIntroVideo() {
+      const video = document.getElementById('introVideo');
+      const overlay = document.getElementById('introOverlay');
+      const fallback = document.getElementById('videoFallback');
+      
+      if (!video || !overlay) return;
+      
+      // 显示遮罩层
+      overlay.style.display = 'flex';
+      
+      // 视频加载成功
+      video.oncanplay = function() {
+        fallback.style.display = 'none';
+      };
+      
+      // 视频播放结束
+      video.onended = function() {
+        hideIntroOverlay();
+      };
+      
+      // 视频加载失败
+      video.onerror = function() {
+        console.log('视频加载失败，显示备用内容');
+        fallback.style.display = 'flex';
+        // 3秒后自动关闭遮罩
+        setTimeout(hideIntroOverlay, 3000);
+      };
+      
+      // 播放视频
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(function(error) {
+          console.log('自动播放被阻止，显示备用内容');
+          fallback.style.display = 'flex';
+          // 点击后尝试播放
+          document.addEventListener('click', function once() {
+            video.play();
+            fallback.style.display = 'none';
+            document.removeEventListener('click', once);
+          }, { once: true });
+        });
+      }
+    }
+
+    function hideIntroOverlay() {
+      const overlay = document.getElementById('introOverlay');
+      if (!overlay) return;
+      
+      // 1.5秒渐变消失
+      overlay.style.transition = 'opacity 1.5s ease';
+      overlay.style.opacity = '0';
+      
+      // 动画结束后隐藏遮罩
+      setTimeout(function() {
+        overlay.style.display = 'none';
+      }, 1500);
+    }
+
+    function skipIntro() {
+      const video = document.getElementById('introVideo');
+      if (video) {
+        video.pause();
+      }
+      hideIntroOverlay();
+    }
 
     // ========== 联系支付弹窗功能 ==========
     let currentPaymentMethod = 'wechat';
@@ -2156,6 +2250,18 @@
       };
 
       qrLabel.innerHTML = `<span class="qr-icon">${qrData.icon}</span><span>${qrData.label}</span>`;
+    }
+
+    // 协议复选框事件
+    document.getElementById('agreementCheckbox').addEventListener('change', function() {
+      const confirmBtn = document.getElementById('confirmPaymentBtn');
+      confirmBtn.disabled = !this.checked;
+    });
+
+    // 查看协议
+    function showTerms(e) {
+      e.stopPropagation();
+      alert('【账号租赁服务协议】\n\n1. 服务说明\n账号租赁服务仅提供游戏账号的临时使用权，不涉及账号所有权转移。\n\n2. 使用规范\n租客须遵守游戏官方用户协议，不得进行任何违规操作。\n\n3. 责任界定\n因租客违规导致的账号封禁，由租客承担全部责任。\n\n4. 隐私政策\n我们严格保护用户个人信息，不会将其用于其他用途。');
     }
 
     function confirmPayment() {
