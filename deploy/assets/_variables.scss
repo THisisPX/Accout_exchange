@@ -1,0 +1,215 @@
+// 三角洲账号租赁平台 - SCSS 变量文件
+// 严格遵循前端开发配色规范
+// 版本: v4.0 | 更新日期: 2026-04-04
+
+// ============================================
+// 1. 主色调-品牌核心（军事风格+专业信任）
+// ============================================
+$color-primary-navy: #1A2B42;
+$color-primary-military-green: #2D4739;
+
+// ============================================
+// 2. 辅助色-交互与状态
+// ============================================
+$color-accent-tactical-orange: #FF7A29;
+$color-state-danger-red: #DC2626;
+$color-state-success-green: #36A269;
+$color-secondary-tech-blue: #4A6FA5;
+
+// ============================================
+// 3. 中性色-基础层级
+// ============================================
+$color-neutral-bg-light: #F8F9FA;
+$color-neutral-bg-dark: #1E293B;
+$color-text-primary: #121826;
+$color-text-secondary: #64748B;
+$color-border-divider: #E2E8F0;
+$color-bg-hover-light: #FFF1E6;
+
+// ============================================
+// 兼容变量映射
+// ============================================
+$color-primary: #FF7A29;
+$color-primary-hover: #FF8F4D;
+$color-primary-active: #E66A1F;
+$color-primary-dim: rgba(255, 122, 41, 0.15);
+$color-primary-glow: rgba(255, 122, 41, 0.5);
+
+$color-secondary: #4A6FA5;
+$color-secondary-dim: rgba(74, 111, 165, 0.15);
+
+$color-accent-gold: #FF7A29;
+$color-accent-orange: #FF7A29;
+$color-accent-red: #DC2626;
+$color-accent-cyan: #4A6FA5;
+
+// ============================================
+// 背景色
+// ============================================
+$color-bg-darkest: #121826;
+$color-bg-dark: #1E293B;
+$color-bg-medium: #2D3443;
+$color-bg-panel: #FFFFFF;
+$color-bg-card: #F8F9FA;
+$color-bg-hover: #E2E8F0;
+
+// ============================================
+// 文字色
+// ============================================
+$color-text-primary: #121826;
+$color-text-secondary: #64748B;
+$color-text-muted: #94A3B8;
+$color-text-disabled: #CBD5E1;
+
+// ============================================
+// 边框色
+// ============================================
+$color-border: rgba(0, 0, 0, 0.08);
+$color-border-light: rgba(0, 0, 0, 0.12);
+$color-border-primary: rgba(255, 122, 41, 0.3);
+
+// ============================================
+// 功能色映射
+// ============================================
+$color-success: #36A269;
+$color-warning: #FF7A29;
+$color-error: #DC2626;
+$color-info: #4A6FA5;
+
+// ============================================
+// 混合器
+// ============================================
+
+// 主按钮（战术橙）
+@mixin button-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: $color-accent-tactical-orange;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #FF8F4D;
+    box-shadow: 0 4px 15px rgba(255, 122, 41, 0.4);
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    background: #E66A1F;
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    background: $color-border-divider;
+    color: $color-text-muted;
+    cursor: not-allowed;
+  }
+}
+
+// 次按钮（科技蓝）
+@mixin button-secondary {
+  background: transparent;
+  color: $color-secondary-tech-blue;
+  border: 1px solid $color-secondary-tech-blue;
+
+  &:hover {
+    background: rgba(74, 111, 165, 0.1);
+  }
+}
+
+// 卡片基础
+@mixin card-base {
+  background: $color-bg-panel;
+  border: 1px solid $color-border-divider;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: $color-accent-tactical-orange;
+    box-shadow: 0 4px 20px rgba(255, 122, 41, 0.15);
+  }
+}
+
+// 成功提示（森林绿）
+@mixin alert-success {
+  background: rgba(54, 162, 105, 0.1);
+  border: 1px solid $color-state-success-green;
+  border-left: 4px solid $color-state-success-green;
+  color: $color-text-secondary;
+}
+
+// 错误提示（警戒红）
+@mixin alert-error {
+  background: rgba(220, 38, 38, 0.1);
+  border: 1px solid $color-state-danger-red;
+  border-left: 4px solid $color-state-danger-red;
+  color: $color-text-secondary;
+}
+
+// 警告提示（战术橙）
+@mixin alert-warning {
+  background: $color-bg-hover-light;
+  border: 1px solid $color-accent-tactical-orange;
+  border-left: 4px solid $color-accent-tactical-orange;
+  color: $color-text-secondary;
+}
+
+// ============================================
+// 响应式断点
+// ============================================
+$breakpoint-sm: 640px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 1024px;
+$breakpoint-xl: 1280px;
+
+// ============================================
+// 间距系统
+// ============================================
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+$spacing-2xl: 48px;
+
+// ============================================
+// 圆角系统
+// ============================================
+$radius-sm: 4px;
+$radius-md: 8px;
+$radius-lg: 12px;
+$radius-xl: 16px;
+$radius-full: 9999px;
+
+// ============================================
+// 阴影系统
+// ============================================
+$shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.1);
+$shadow-glow: 0 4px 15px rgba(255, 122, 41, 0.4);
+
+// ============================================
+// 动画
+// ============================================
+$transition-fast: 0.15s ease;
+$transition-base: 0.2s ease;
+$transition-slow: 0.3s ease;
+
+// ============================================
+// z-index 层级
+// ============================================
+$z-dropdown: 100;
+$z-sticky: 200;
+$z-modal-backdrop: 300;
+$z-modal: 400;
+$z-tooltip: 500;
+$z-toast: 600;
