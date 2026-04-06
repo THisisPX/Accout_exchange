@@ -34,7 +34,7 @@
     </div>
 
     <section class="hero">
-      <div class="hero-decoration hero-decoration-left">
+      <!-- <div class="hero-decoration hero-decoration-left">
         <span class="deco-element deco-crosshair">⌖</span>
         <span class="deco-element deco-target">◎</span>
         <span class="deco-line deco-line-1"></span>
@@ -43,7 +43,7 @@
         <span class="deco-element deco-box">▣</span>
         <span class="deco-element deco-gear">⚙</span>
         <span class="deco-line deco-line-2"></span>
-      </div>
+      </div> -->
       <div class="hero-content">
         <div class="hero-badge-special">🎮 三角洲行动官方合作</div>
         <h1>三角洲账号租赁平台</h1>
@@ -186,7 +186,7 @@
             <h3>热门推荐</h3>
             <button id="refreshBtn" class="refresh-btn">换一批</button>
           </div>
-          <div id="hotList" class="accounts-grid hot-grid"></div>
+          <div id="hotList" class="account-list hot-grid"></div>
         </div>
 
         <!-- 筛选表格 -->
@@ -1023,14 +1023,154 @@
     
     // 渲染账号卡片
     const renderAccounts = (list, root, emptyEl) => {
-      if (root.id === 'hotList') {
-        renderAccountsAsCards(list, root, emptyEl);
-      } else {
-        renderAccountsAsTable(list, root, emptyEl);
-      }
+      renderAccountsAsList(list, root, emptyEl);
     };
     
-    // 渲染为卡片（用于热门推荐）
+    // 渲染为紧凑列表（类似 zxfps.com）
+    const renderAccountsAsList = (list, root, emptyEl) => {
+      root.innerHTML = "";
+      if (!list.length) {
+        root.innerHTML = '<div class="account-list-empty">暂无账号数据</div>';
+        return;
+      }
+      
+      const isHotSection = root.classList.contains('hot-grid');
+      
+      if (isHotSection) {
+        list.forEach(x => {
+          const item = document.createElement("div");
+          item.className = "account-list-item";
+          item.dataset.accountId = x.id;
+          item.dataset.paymentEnabled = x.paymentEnabled !== false;
+          item.dataset.paymentNote = x.paymentNote || "支持支付";
+          item.dataset.price = x.price;
+          
+          item.addEventListener('click', function() {
+            document.querySelectorAll('.account-list-item.selected').forEach(c => c.classList.remove('selected'));
+            item.classList.add('selected');
+            
+            const container = document.getElementById('fixedPaymentContainer');
+            const btn = document.getElementById('fixedPaymentBtn');
+            const infoText = container ? container.querySelector('.selected-account-info-text') : null;
+            
+            if (container && btn) {
+              container.classList.add('active');
+              if (infoText) {
+                infoText.innerHTML = `已选择：<strong>${x.id}</strong> | 租金 ¥${x.deposit}/小时 押金 ¥${x.price}`;
+              }
+            }
+            
+            handleAccountSelection(item, x);
+          });
+          
+          const allSkins = x.skins || [];
+          let skinsHtml = '';
+          if (allSkins.length > 0) {
+            const knifeSkins = ['暗星', '信条', '赤霄', '怜悯', '龙牙', '影锋', '黑海', '北极星', '电锯惊魂'];
+            allSkins.slice(0, 3).forEach(skin => {
+              const isKnife = knifeSkins.includes(skin);
+              skinsHtml += `<span class="skin-mini-tag ${isKnife ? 'knife' : 'operator'}">${skin}</span>`;
+            });
+            if (allSkins.length > 3) {
+              skinsHtml += `<span class="skin-mini-tag">+${allSkins.length - 3}</span>`;
+            }
+          }
+          
+          item.innerHTML = `
+            <span class="id-col">${x.id}</span>
+            <span class="meta-info">
+              <span>${x.date}</span>
+              <span>${x.region}</span>
+              <span>${x.server}</span>
+            </span>
+            <span class="skins-col">${skinsHtml || '<span style="color:#ccc">无皮肤</span>'}</span>
+            <span class="rank-col rank-${x.rank}">${x.rank}</span>
+            <span class="login-col ${x.loginType === 'QQ' ? 'qq' : 'wechat'}">${x.loginType}</span>
+            <span class="price-col">
+              <span class="rent-price">¥${x.deposit}</span>
+              <span class="deposit-price">押金¥${x.price}</span>
+            </span>
+          `;
+          
+          root.appendChild(item);
+        });
+        return;
+      }
+      
+      const header = document.createElement("div");
+      header.className = "account-list-header";
+      header.innerHTML = `
+        <span>账号</span>
+        <span>日期</span>
+        <span>地区</span>
+        <span>服务器</span>
+        <span>登录</span>
+        <span>皮肤</span>
+        <span>段位</span>
+        <span style="text-align:right">价格</span>
+      `;
+      root.appendChild(header);
+      
+      list.forEach(x => {
+        const item = document.createElement("div");
+        item.className = "account-list-item";
+        item.dataset.accountId = x.id;
+        item.dataset.paymentEnabled = x.paymentEnabled !== false;
+        item.dataset.paymentNote = x.paymentNote || "支持支付";
+        item.dataset.price = x.price;
+        
+        item.addEventListener('click', function() {
+          document.querySelectorAll('.account-list-item.selected').forEach(c => c.classList.remove('selected'));
+          item.classList.add('selected');
+          
+          const container = document.getElementById('fixedPaymentContainer');
+          const btn = document.getElementById('fixedPaymentBtn');
+          const infoText = container ? container.querySelector('.selected-account-info-text') : null;
+          
+          if (container && btn) {
+            container.classList.add('active');
+            if (infoText) {
+              infoText.innerHTML = `已选择：<strong>${x.id}</strong> | 租金 ¥${x.deposit}/小时 押金 ¥${x.price}`;
+            }
+          }
+          
+          handleAccountSelection(item, x);
+        });
+        
+        const allSkins = x.skins || [];
+        let skinsHtml = '';
+        if (allSkins.length > 0) {
+          const knifeSkins = ['暗星', '信条', '赤霄', '怜悯', '龙牙', '影锋', '黑海', '北极星', '电锯惊魂'];
+          allSkins.slice(0, 3).forEach(skin => {
+            const isKnife = knifeSkins.includes(skin);
+            skinsHtml += `<span class="skin-mini-tag ${isKnife ? 'knife' : 'operator'}">${skin}</span>`;
+          });
+          if (allSkins.length > 3) {
+            skinsHtml += `<span class="skin-mini-tag">+${allSkins.length - 3}</span>`;
+          }
+        } else {
+          skinsHtml = '<span style="color:#ccc">-</span>';
+        }
+        
+        item.innerHTML = `
+          <span class="id-col">${x.id}</span>
+          <span class="date-col">${x.date}</span>
+          <span class="region-col">${x.region}</span>
+          <span class="server-col">${x.server}</span>
+          <span class="login-col ${x.loginType === 'QQ' ? 'qq' : 'wechat'}">${x.loginType}</span>
+          <span class="skins-col">${skinsHtml}</span>
+          <span class="rank-col rank-${x.rank}">${x.rank}</span>
+          <span class="price-col">
+            <span class="rent-price">¥${x.deposit}</span>
+            <span class="deposit-price">押金¥${x.price}</span>
+          </span>
+        `;
+        
+        root.appendChild(item);
+      });
+    };
+    
+    // 渲染为卡片（用于热门推荐）- 已废弃，使用紧凑列表
     const renderAccountsAsCards = (list, root, emptyEl) => {
       root.innerHTML = "";
       if (!list.length) {
@@ -1202,83 +1342,9 @@
       return value.toFixed(1) + 'M';
     };
     
-    // 渲染为表格（用于普通账号列表）
+    // 渲染为表格（用于普通账号列表）- 使用紧凑列表格式
     const renderAccountsAsTable = (list, root, emptyEl) => {
-      const tbody = document.getElementById('accountsTableBody');
-      tbody.innerHTML = "";
-      if (!list.length) {
-        if (emptyEl) emptyEl.style.display = "block";
-        return;
-      }
-      if (emptyEl) emptyEl.style.display = "none";
-      list.forEach((x, index) => {
-        const tr = document.createElement("tr");
-        tr.className = 'account-row';
-        tr.dataset.accountId = x.id;
-        
-        // 处理皮肤列
-        let skinsHtml = '-';
-        if (x.skins && x.skins.length > 0) {
-          skinsHtml = x.skins.map(skin => `<span class="skin-tag">${skin}</span>`).join(' ');
-        }
-        
-        // 处理备注列
-        let noteHtml = x.note || '暂无备注';
-        
-        tr.innerHTML = `
-          <td>${x.id}</td>
-          <td>${x.date}</td>
-          <td>${x.region}</td>
-          <td>${x.server}</td>
-          <td>${x.loginType}</td>
-          <td><span class="rank-badge">${x.rank}</span></td>
-          <td>${convertHarvardCoinsToM(x.harvardCoins)}</td>
-          <td>${x.level}级</td>
-          <td>${x.safeBox}</td>
-          <td>${x.trainingCenter || '-'}</td>
-          <td>${x.shootingRange || '-'}</td>
-          <td>${x.awmBullets || '-'}</td>
-          <td class="collapsible-cell">
-            <div class="collapsible-content collapsed" id="skins-content-${index}">${skinsHtml}</div>
-            <button class="expand-btn" onclick="toggleCellContent('skins-content-${index}', this)">展开</button>
-          </td>
-          <td>¥${x.deposit}</td>
-          <td>¥${x.price}</td>
-          <td class="collapsible-cell">
-            <div class="collapsible-content collapsed" id="note-content-${index}">${noteHtml}</div>
-            <button class="expand-btn" onclick="toggleCellContent('note-content-${index}', this)">展开</button>
-          </td>
-        `;
-        
-        // 点击行显示联系支付按钮（必须在innerHTML之后添加）
-        let currentSelectedAccount = null;
-        
-        tr.addEventListener('click', function(e) {
-          // 忽略展开/收起按钮的点击
-          if (e.target.classList.contains('expand-btn')) return;
-          
-          // 清除之前的选择
-          document.querySelectorAll('.account-row.selected').forEach(row => {
-            row.classList.remove('selected');
-          });
-          
-          // 设置当前选中
-          this.classList.add('selected');
-          currentSelectedAccount = x;
-          
-          // 显示固定支付按钮容器
-          const container = document.getElementById('fixedPaymentContainer');
-          const btn = document.getElementById('fixedPaymentBtn');
-          const infoText = container.querySelector('.selected-account-info-text');
-          
-          if (container && btn) {
-            container.classList.add('active');
-            infoText.innerHTML = `已选择：<strong>${x.id}</strong> | 租金 ¥${x.deposit}/小时 押金 ¥${x.price}`;
-          }
-        });
-        
-        tbody.appendChild(tr);
-      });
+      renderAccountsAsList(list, root, emptyEl);
     };
 
     // 分页变量
@@ -2022,8 +2088,6 @@
       const btn = getOrCreatePaymentButton();
       
       if (show) {
-        btn.classList.add('loading');
-        btn.innerHTML = '<span class="btn-loading">检测中...</span>';
         btn.disabled = true;
       } else {
         btn.classList.remove('loading');

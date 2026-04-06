@@ -28,6 +28,278 @@
   --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.15);
 }
 
+/* ---------- 支付弹窗 ---------- */
+.payment-modal {
+  max-width: 420px;
+  padding: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  background: #ffffff;
+  position: relative;
+}
+
+.payment-modal .modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #f5f5f5;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.payment-modal .modal-close:hover {
+  background: #e0e0e0;
+}
+
+.payment-header {
+  background: linear-gradient(135deg, #52c41a 0%, #73d13d 100%);
+  padding: 32px 24px;
+  text-align: center;
+  color: #fff;
+}
+
+.payment-header .payment-icon {
+  font-size: 48px;
+  margin-bottom: 8px;
+}
+
+.payment-header h2 {
+  margin: 0 0 8px;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.payment-header .payment-subtitle {
+  margin: 0;
+  opacity: 0.9;
+  font-size: 0.9rem;
+}
+
+.payment-info {
+  padding: 20px 24px;
+  background: #fff;
+}
+
+.payment-info .info-section {
+  margin-bottom: 16px;
+}
+
+.payment-info .info-section h4 {
+  margin: 0 0 8px;
+  font-size: 0.9rem;
+  color: #262626;
+  font-weight: 600;
+}
+
+.payment-info .info-section ul {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 0.85rem;
+  color: #595959;
+  line-height: 1.8;
+}
+
+.payment-methods {
+  display: flex;
+  gap: 12px;
+}
+
+.method-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 12px;
+  border: 2px solid #f0f0f0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.method-card:hover {
+  border-color: #d9d9d9;
+}
+
+.method-card.active {
+  border-color: #52c41a;
+  background: #f6ffed;
+}
+
+.method-card .method-icon {
+  font-size: 28px;
+  margin-bottom: 4px;
+}
+
+.method-card .method-name {
+  font-size: 0.8rem;
+  color: #595959;
+  font-weight: 500;
+}
+
+.safety-tips ul {
+  list-style: none;
+  padding: 0;
+}
+
+.safety-tips li {
+  font-size: 0.8rem;
+  color: #8c8c8c;
+  padding: 4px 0;
+}
+
+.payment-qr-section {
+  padding: 20px 24px;
+  background: #ffffff;
+  text-align: center;
+}
+
+.qr-display {
+  display: inline-block;
+}
+
+.qr-container {
+  width: 160px;
+  height: 160px;
+  background: #fff;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.qr-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.qr-placeholder {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  color: #8c8c8c;
+}
+
+.qr-placeholder span {
+  font-size: 36px;
+  margin-bottom: 8px;
+}
+
+.qr-placeholder p {
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.qr-placeholder small {
+  font-size: 0.75rem;
+}
+
+.qr-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: #52c41a;
+  font-weight: 500;
+}
+
+.payment-agreement {
+  margin: 16px 0;
+  text-align: left;
+}
+
+.agreement-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: #595959;
+  cursor: pointer;
+}
+
+.agreement-checkbox input {
+  margin-top: 3px;
+}
+
+.agreement-text a {
+  color: #1890ff;
+  text-decoration: none;
+}
+
+.payment-actions {
+  text-align: center;
+}
+
+.btn-confirm-payment {
+  width: 100%;
+  padding: 14px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  background: #52c41a;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-confirm-payment:hover:not(:disabled) {
+  background: #389e0d;
+}
+
+.btn-confirm-payment:disabled {
+  background: #d9d9d9;
+  cursor: not-allowed;
+}
+
+.confirm-hint {
+  margin: 8px 0 0;
+  font-size: 0.8rem;
+  color: #8c8c8c;
+}
+
+.payment-footer {
+  padding: 16px 24px;
+  background: #f5f5f5;
+  text-align: center;
+  font-size: 0.8rem;
+  color: #8c8c8c;
+}
+
+.payment-footer p {
+  margin: 4px 0;
+}
+
+.payment-footer a {
+  color: #1890ff;
+}
+
+/* 弹窗响应式 */
+@media (max-width: 480px) {
+  .payment-modal {
+    width: 95%;
+    margin: 10px;
+  }
+  
+  .payment-header {
+    padding: 24px 16px;
+  }
+  
+  .payment-methods {
+    flex-direction: column;
+  }
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -40,6 +312,22 @@ body {
   color: var(--text-primary);
   line-height: 1.6;
   min-height: 100vh;
+  position: relative;
+}
+
+body::before {
+  content: '非星商行';
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-30deg);
+  font-size: 80px;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.03);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 0;
+  user-select: none;
 }
 
 .container {
@@ -1398,6 +1686,7 @@ body {
   overflow-y: auto;
   transform: scale(0.9);
   transition: all 0.3s ease;
+  position: relative;
 }
 
 .modal-overlay.active .modal {
@@ -1817,5 +2106,254 @@ body {
   
   .category-tabs {
     flex-wrap: wrap;
+  }
+}
+
+/* ---------- 紧凑列表布局 类似 zxfps ---------- */
+.account-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* 热门推荐特殊布局 - 横向滚动展示 */
+.hot-grid.account-list {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  overflow-x: auto;
+  padding: 16px 0;
+  scroll-snap-type: x mandatory;
+}
+
+.hot-grid .account-list-item {
+  flex: 0 0 260px;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto auto auto auto auto;
+  gap: 8px;
+  padding: 16px;
+  border: 1px solid #f0f0f0;
+  border-radius: 12px;
+  background: #fff;
+  scroll-snap-align: start;
+}
+
+.hot-grid .account-list-item .id-col {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #52c41a;
+  text-align: center;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed #f0f0f0;
+}
+
+.hot-grid .account-list-item .meta-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: #8c8c8c;
+}
+
+.hot-grid .account-list-item .skins-col {
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+}
+
+.hot-grid .account-list-item .skins-col .skin-mini-tag {
+  font-size: 0.65rem;
+  padding: 2px 6px;
+}
+
+.hot-grid .account-list-item .rank-col {
+  justify-content: center;
+}
+
+.hot-grid .account-list-item .login-col {
+  text-align: center;
+  margin: 4px 0;
+}
+
+.hot-grid .account-list-item .price-col {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 8px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.account-list-item {
+  display: grid;
+  grid-template-columns: 140px 100px 80px 70px 80px 1fr 100px 100px;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.account-list-item:hover {
+  background: #fafafa;
+}
+
+.account-list-item:nth-child(even) {
+  background: #fafafa;
+}
+
+.account-list-item:nth-child(even):hover {
+  background: #f5f5f5;
+}
+
+.account-list-item.selected {
+  background: #fff7e6;
+  border-left: 3px solid #ff6600;
+}
+
+.account-list-item .id-col {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  color: #52c41a;
+  font-size: 0.9rem;
+}
+
+.account-list-item .date-col {
+  color: #595959;
+  font-size: 0.85rem;
+}
+
+.account-list-item .region-col {
+  font-size: 0.85rem;
+}
+
+.account-list-item .server-col {
+  font-size: 0.85rem;
+}
+
+.account-list-item .login-col {
+  font-size: 0.8rem;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.account-list-item .login-col.qq {
+  background: #e6f7ff;
+  color: #1890ff;
+}
+
+.account-list-item .login-col.wechat {
+  background: #f6ffed;
+  color: #52c41a;
+}
+
+.account-list-item .skins-col {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  max-width: 200px;
+}
+
+.account-list-item .skins-col .skin-mini-tag {
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  background: #f5f5f5;
+  border-radius: 4px;
+  color: #595959;
+}
+
+.account-list-item .skins-col .skin-mini-tag.knife {
+  background: #fff1f0;
+  color: #ff4d4f;
+}
+
+.account-list-item .skins-col .skin-mini-tag.operator {
+  background: #e6f7ff;
+  color: #1890ff;
+}
+
+.account-list-item .rank-col {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.account-list-item .rank-col.rank-青铜 { background: #fff7e6; color: #d46b08; }
+.account-list-item .rank-col.rank-白银 { background: #fafafa; color: #8c8c8c; }
+.account-list-item .rank-col.rank-黄金 { background: #fffbe6; color: #d4b106; }
+.account-list-item .rank-col.rank-铂金 { background: #e6f7ff; color: #1890ff; }
+.account-list-item .rank-col.rank-钻石 { background: #f0f5ff; color: #2f54eb; }
+.account-list-item .rank-col.rank-黑鹰 { background: #f9f0ff; color: #722ed1; }
+.account-list-item .rank-col.rank-三角洲巅峰 { background: linear-gradient(135deg, #fff7e6, #fff1f0); color: #d46b08; }
+
+.account-list-item .price-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.account-list-item .price-col .rent-price {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #ff6600;
+}
+
+.account-list-item .price-col .deposit-price {
+  font-size: 0.75rem;
+  color: #8c8c8c;
+}
+
+/* 列表头部 */
+.account-list-header {
+  display: grid;
+  grid-template-columns: 140px 100px 80px 70px 80px 1fr 100px 100px;
+  padding: 12px 16px;
+  background: #f5f5f5;
+  border-bottom: 2px solid #d9d9d9;
+  font-weight: 700;
+  color: #262626;
+  font-size: 0.85rem;
+}
+
+.account-list-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: #8c8c8c;
+}
+
+/* 紧凑模式响应式 */
+@media (max-width: 1024px) {
+  .account-list-item,
+  .account-list-header {
+    grid-template-columns: 100px 80px 60px 1fr 80px;
+    gap: 8px;
+  }
+  
+  .account-list-item .region-col,
+  .account-list-item .server-col,
+  .account-list-header .region-col,
+  .account-list-header .server-col {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .account-list-item,
+  .account-list-header {
+    grid-template-columns: 1fr 80px 80px;
+  }
+  
+  .account-list-item .login-col,
+  .account-list-header .login-col {
+    display: none;
+  }
+  
+  .account-list-item .skins-col,
+  .account-list-header .skins-col {
+    display: none;
   }
 }
